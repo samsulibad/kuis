@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Etika Bermedia Sosial WhatsApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .quiz-container {
+            display: none;
+        }
+
+        .quiz-container.active {
+            display: block;
+        }
+
+        .nav-info {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .question-number {
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 1.5rem 0;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .option-label:hover {
+            background: #f0f0f0;
+            border-color: #667eea;
+        }
+
+        .option-label input[type="radio"] {
+            margin-right: 12px;
+            margin-top: 2px;
+            flex-shrink: 0;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .option-label input[type="radio"]:checked ~ .option-text {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .option-label input[type="radio"]:checked + label {
+            color: #667eea;
+        }
+
+        .option-text {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 2rem;
+            justify-content: space-between;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #667eea;
+            color: white;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-button-left {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .nav-button-left:hover {
+            background: #e0e0e0;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+        }
+
+        .results-container {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .results-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: 700;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .percentage {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .results-message {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-detail {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: left;
+            margin: 1rem 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .results-detail strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .results-detail p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .rating {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .rating.excellent {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .rating.good {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .rating.fair {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .rating.poor {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .start-screen {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .start-screen h2 {
+            font-size: 24px;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .start-screen p {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 14px 40px;
+            font-size: 16px;
+            width: auto;
+            margin-top: 1rem;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-size: 14px;
+            color: #333;
+            text-align: left;
+        }
+
+        .info-box strong {
+            color: #667eea;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .content {
+                padding: 1.5rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .score-circle {
+                width: 100px;
+                height: 100px;
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Kuis Etika Bermedia Sosial WhatsApp</h1>
+            <p>Uji pemahaman Anda tentang keamanan, privasi, dan komunikasi etis</p>
+        </div>
+
+        <div class="content">
+            <!-- Start Screen -->
+            <div id="start-screen" class="start-screen">
+                <h2>Selamat Datang! 👋</h2>
+                <p>Kuis ini berisi 20 pertanyaan untuk menguji pemahaman Anda tentang etika bermedia sosial WhatsApp, meliputi:</p>
+                <div class="info-box">
+                    <strong>📌 Topik yang Diujikan:</strong><br>
+                    • Keamanan Data Pribadi<br>
+                    • Privasi dan Kerahasiaan<br>
+                    • Literasi Digital (Hoax & Misinformasi)<br>
+                    • Pembelajaran dan Komunikasi Etis
+                </div>
+                <p style="font-size: 14px; color: #666; margin-top: 1rem;">
+                    Waktu: Tidak dibatasi | Skor: Ditampilkan di akhir
+                </p>
+                <button class="start-btn" onclick="startQuiz()">Mulai Kuis →</button>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quiz-content"></div>
+            <div class="button-group" id="nav-buttons"></div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "Apa yang dimaksud dengan 'data pribadi' dalam konteks keamanan digital?",
+                options: [
+                    "Informasi yang hanya diketahui oleh diri sendiri",
+                    "Informasi unik tentang dirimu yang bisa digunakan untuk mengidentifikasi siapa kamu",
+                    "Foto dan video yang ada di ponselmu",
+                    "Semua percakapan yang kamu lakukan"
+                ],
+                correct: 1
+            },
+            {
+                q: "Mana dari berikut ini yang TIDAK boleh dibagikan di WhatsApp?",
+                options: [
+                    "Nomor induk siswa",
+                    "Nomor rekening dan PIN",
+                    "Lokasi real-time rumahmu",
+                    "Semua jawaban di atas benar"
+                ],
+                correct: 3
+            },
+            {
+                q: "Apa fungsi verifikasi dua langkah (Two-step verification) di WhatsApp?",
+                options: [
+                    "Mempercepat pengiriman pesan",
+                    "Melindungi akun dari akses tidak sah dengan kode tambahan",
+                    "Meningkatkan kualitas gambar",
+                    "Membuat percakapan lebih rahasia"
+                ],
+                correct: 1
+            },
+            {
+                q: "Apa perbedaan utama antara PRIVASI dan KEAMANAN?",
+                options: [
+                    "Privasi = siapa yang bisa melihat data; Keamanan = apakah data terlindungi dari ancaman",
+                    "Privasi = untuk orang kaya; Keamanan = untuk semua orang",
+                    "Tidak ada perbedaan",
+                    "Privasi lebih penting daripada keamanan"
+                ],
+                correct: 0
+            },
+            {
+                q: "Jika ada pesan di WhatsApp yang mengatakan 'Hati-hati, virus berbahaya! Bagikan ke semua kontak', apa yang seharusnya kamu lakukan?",
+                options: [
+                    "Langsung bagikan ke semua teman",
+                    "Verifikasi sumber dan cek kebenaran informasi sebelum membagikan",
+                    "Tanya guru tanpa mengecek dulu",
+                    "Abaikan saja"
+                ],
+                correct: 1
+            },
+            {
+                q: "Apa itu 'hoax' dalam konteks media sosial?",
+                options: [
+                    "Informasi yang sudah kadaluarsa",
+                    "Berita palsu yang sengaja dibuat untuk menipu",
+                    "Pesan yang dikirim lebih dari sekali",
+                    "Percakapan pribadi yang dibagikan publik"
+                ],
+                correct: 1
+            },
+            {
+                q: "Cara terbaik untuk memverifikasi informasi sebelum membagikannya adalah...",
+                options: [
+                    "Cek sumber, tanggal, gunakan Google Reverse Image Search, dan bertanya jika ragu",
+                    "Percaya pada siapa pun yang mengirimnya",
+                    "Langsung bagikan tanpa verifikasi",
+                    "Tanya teman apakah informasi itu benar"
+                ],
+                correct: 0
+            },
+            {
+                q: "Apa keuntungan menggunakan WhatsApp untuk belajar?",
+                options: [
+                    "Guru dapat berbagi materi dengan cepat",
+                    "Siswa bisa bertanya kapan saja",
+                    "Mudah mengorganisir bahan ajar",
+                    "Semua jawaban di atas benar"
+                ],
+                correct: 3
+            },
+            {
+                q: "Fitur WhatsApp mana yang paling berguna untuk menyimpan bahan ajar penting?",
+                options: [
+                    "Bookmark",
+                    "Status",
+                    "Profile Picture",
+                    "Last Seen"
+                ],
+                correct: 0
+            },
+            {
+                q: "Etika apa yang sebaiknya dipatuhi saat berbicara di grup WhatsApp kelas?",
+                options: [
+                    "Gunakan bahasa kasar agar terlihat keren",
+                    "Spam dengan banyak pesan sekaligus",
+                    "Tunggu giliran, gunakan bahasa sopan, dengarkan pendapat lain",
+                    "Potong pembicaraan sesering mungkin"
+                ],
+                correct: 2
+            },
+            {
+                q: "Jika ada konflik atau ketegangan di grup WhatsApp, apa yang seharusnya kamu lakukan?",
+                options: [
+                    "Balas dengan emosi tanpa berpikir",
+                    "Ambil waktu untuk menenangkan diri dan pindah ke chat pribadi jika perlu",
+                    "Blokir semua orang di grup",
+                    "Posting masalah tersebut di media sosial publik"
+                ],
+                correct: 1
+            },
+            {
+                q: "Apakah boleh membagikan pesan atau foto teman tanpa izin di WhatsApp?",
+                options: [
+                    "Ya, selama tidak menyebutkan nama",
+                    "Ya, jika hanya ke teman dekat",
+                    "Tidak, itu melanggar privasi",
+                    "Tergantung apa isinya"
+                ],
+                correct: 2
+            },
+            {
+                q: "Apa yang dimaksud dengan 'misinformasi'?",
+                options: [
+                    "Informasi palsu yang sengaja dibuat untuk merugikan",
+                    "Informasi salah yang dibagikan tanpa niat jahat",
+                    "Informasi yang terlalu panjang",
+                    "Informasi yang berbahasa asing"
+                ],
+                correct: 1
+            },
+            {
+                q: "Jika kamu menerima kode OTP (One-Time Password) dari WhatsApp, apa yang harus kamu lakukan?",
+                options: [
+                    "Bagikan ke teman agar mereka bisa membantu",
+                    "Jangan pernah memberikan kode ini kepada siapa pun",
+                    "Kirim ke nomor yang memintanya",
+                    "Simpan di notes publik agar tidak lupa"
+                ],
+                correct: 1
+            },
+            {
+                q: "Pengaturan privasi mana yang sebaiknya digunakan untuk menyembunyikan waktu online Anda?",
+                options: [
+                    "Settings > Privacy > Profile Photo",
+                    "Settings > Account > Two-step Verification",
+                    "Settings > Privacy > Last Seen",
+                    "Settings > Notifications > Alerts"
+                ],
+                correct: 2
+            },
+            {
+                q: "Apa tanda bahwa seorang pengguna mungkin mencoba menipu Anda di WhatsApp?",
+                options: [
+                    "Meminta data pribadi atau nomor rekening",
+                    "Mengirim link dari orang asing yang mencurigakan",
+                    "Mengklaim memenangkan undian yang tidak pernah diikuti",
+                    "Semua jawaban di atas benar"
+                ],
+                correct: 3
+            },
+            {
+                q: "Dalam literasi digital, 'cek sumber' berarti...",
+                options: [
+                    "Tanya siapa yang mengirim pesan",
+                    "Verifikasi apakah informasi berasal dari media terpercaya atau akun resmi",
+                    "Lihat tanggal pembuatan pesan",
+                    "Hitung berapa banyak orang yang membagikan"
+                ],
+                correct: 1
+            },
+            {
+                q: "Apa yang seharusnya dilakukan jika menemukan konten yang tidak pantas atau mencurigakan di WhatsApp grup?",
+                options: [
+                    "Langsung bagikan ke grup lain untuk diperingatkan",
+                    "Laporkan ke admin grup atau guru",
+                    "Abaikan saja",
+                    "Ambil screenshot dan posting di media sosial"
+                ],
+                correct: 1
+            },
+            {
+                q: "Manakah yang bukan merupakan praktik keamanan data pribadi yang baik?",
+                options: [
+                    "Menggunakan password yang kuat",
+                    "Membagikan password dengan teman terpercaya",
+                    "Mengaktifkan verifikasi dua langkah",
+                    "Tidak membagikan nomor telepon dengan orang asing"
+                ],
+                correct: 1
+            },
+            {
+                q: "Kesimpulan utama dari panduan etika bermedia sosial adalah...",
+                options: [
+                    "Jangan pernah menggunakan WhatsApp",
+                    "WhatsApp bisa digunakan dengan bijak dengan menjaga keamanan, privasi, dan etika komunikasi",
+                    "Privasi lebih penting daripada keamanan",
+                    "Semua orang yang mengirim pesan bisa dipercaya"
+                ],
+                correct: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(quizData.length).fill(null);
+        let quizStarted = false;
+
+        function startQuiz() {
+            quizStarted = true;
+            document.getElementById('start-screen').style.display = 'none';
+            renderQuiz();
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-content');
+            const q = quizData[currentQuestion];
+            const progress = ((currentQuestion + 1) / quizData.length) * 100;
+
+            let html = `
+                <div class="nav-info">Pertanyaan ${currentQuestion + 1} dari ${quizData.length}</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
+                <div class="question-card">
+                    <div class="question-number">Soal ${currentQuestion + 1}</div>
+                    <p class="question-text">${q.q}</p>
+                    <div class="options">
+            `;
+
+            q.options.forEach((opt, idx) => {
+                const isChecked = answers[currentQuestion] === idx ? 'checked' : '';
+                html += `
+                    <label class="option-label">
+                        <input type="radio" name="answer" value="${idx}" ${isChecked} onchange="answers[${currentQuestion}] = ${idx};">
+                        <span class="option-text">${opt}</span>
+                    </label>
+                `;
+            });
+
+            html += `</div></div>`;
+            container.innerHTML = html;
+            renderNavButtons();
+        }
+
+        function renderResults() {
+            let correct = 0;
+            quizData.forEach((q, idx) => {
+                if (answers[idx] === q.correct) correct++;
+            });
+
+            const percentage = Math.round((correct / quizData.length) * 100);
+            let message = '';
+            let ratingClass = '';
+
+            if (percentage >= 90) {
+                message = '🌟 Sempurna! Kamu menguasai materi dengan sangat baik! Pemahaman etika bermedia sosialmu sangat excellent!';
+                ratingClass = 'excellent';
+            } else if (percentage >= 80) {
+                message = '👏 Sangat bagus! Kamu sudah memahami etika bermedia sosial dengan baik. Terus pertahankan!';
+                ratingClass = 'good';
+            } else if (percentage >= 70) {
+                message = '💪 Bagus! Kamu sudah memiliki pemahaman yang cukup. Pelajari lebih lanjut untuk topik yang belum tepat.';
+                ratingClass = 'good';
+            } else if (percentage >= 60) {
+                message = '📚 Cukup. Kamu perlu mempelajari beberapa topik lagi untuk lebih memahami etika bermedia sosial.';
+                ratingClass = 'fair';
+            } else {
+                message = '📖 Terus belajar! Baca kembali panduan untuk pemahaman yang lebih baik.';
+                ratingClass = 'poor';
+            }
+
+            const container = document.getElementById('quiz-content');
+            container.innerHTML = `
+                <div class="results-container">
+                    <div class="results-title">Hasil Kuis Anda</div>
+                    <div class="score-circle">${correct}/${quizData.length}</div>
+                    <div class="percentage">${percentage}%</div>
+                    <div class="rating ${ratingClass}">
+                        ${percentage >= 90 ? 'EXCELLENT' : percentage >= 80 ? 'GOOD' : percentage >= 70 ? 'GOOD' : percentage >= 60 ? 'FAIR' : 'PERLU BELAJAR LAGI'}
+                    </div>
+                    <div class="results-message" style="margin-top: 1.5rem;">
+                        ${message}
+                    </div>
+                    <div class="results-detail">
+                        <strong>📊 Ringkasan Hasil:</strong>
+                        <p>
+                            <strong>Jawaban Benar:</strong> ${correct}/${quizData.length}<br>
+                            <strong>Jawaban Salah:</strong> ${quizData.length - correct}/${quizData.length}<br>
+                            <strong>Persentase:</strong> ${percentage}%<br>
+                            <br>
+                            <em>Pelajari kembali materi yang belum dikuasai untuk meningkatkan pemahaman etika bermedia sosial!</em>
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            renderNavButtons();
+        }
+
+        function renderNavButtons() {
+            const btnContainer = document.getElementById('nav-buttons');
+            let html = '';
+
+            if (quizStarted && currentQuestion === quizData.length - 1 && answers.every(a => a !== null)) {
+                // Semua soal sudah dijawab
+                html += '<button class="submit-btn" onclick="submitQuiz()">Lihat Hasil Akhir ✓</button>';
+            } else if (quizStarted && currentQuestion !== quizData.length - 1) {
+                // Masih ada soal
+                if (currentQuestion > 0) {
+                    html += '<button class="nav-button-left" onclick="prevQuestion()">← Sebelumnya</button>';
+                }
+                html += '<button onclick="nextQuestion()" style="flex: 1;">Selanjutnya →</button>';
+            } else if (quizStarted && currentQuestion === quizData.length - 1) {
+                // Di soal terakhir
+                if (currentQuestion > 0) {
+                    html += '<button class="nav-button-left" onclick="prevQuestion()">← Sebelumnya</button>';
+                }
+                html += '<button class="submit-btn" onclick="submitQuiz()" style="flex: 1;">Lihat Hasil ✓</button>';
+            }
+
+            // Tombol Ulangi Kuis (jika sudah menyelesaikan)
+            if (quizStarted && currentQuestion === quizData.length - 1 && answers.every(a => a !== null)) {
+                if (document.getElementById('quiz-content').innerHTML.includes('Hasil Kuis')) {
+                    html = '<button onclick="restartQuiz()" style="width: 100%;">↻ Ulangi Kuis</button>';
+                }
+            }
+
+            btnContainer.innerHTML = html;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                renderQuiz();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuiz();
+            }
+        }
+
+        function submitQuiz() {
+            currentQuestion = quizData.length - 1;
+            renderResults();
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = new Array(quizData.length).fill(null);
+            quizStarted = true;
+            document.getElementById('start-screen').style.display = 'none';
+            renderQuiz();
+        }
+    </script>
+</body>
+</html>
